@@ -1,23 +1,18 @@
 from flask import Flask
 from flask import render_template
-from flask.ext.bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
+from blog.index_view import index_page
+from blog.log_view import log_page
+from blog.test_view import test_page
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
-@app.route('/')
-def hello_world():
-    return render_template('index.html')
+app.register_blueprint(index_page)
+app.register_blueprint(log_page)
+app.register_blueprint(test_page)
 
-
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html',name=name)
-
-@app.route('/test')
-def test():
-    return render_template('test.html')
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
