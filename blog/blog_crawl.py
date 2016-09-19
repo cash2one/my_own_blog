@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import urllib2, requests, re, sys,chardet
+from pyquery import PyQuery as pyq
 
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -33,8 +34,18 @@ class Blog_spider():
         #     print i
         return url_list
 
+    @classmethod
+    def get_data(cls):
+        for i in Blog_spider.get_href():
+            doc = Blog_spider.get_html(i)
+            html = pyq(doc)
+            cts = html('.article_title')
+            print cts
+
+
 
 if __name__ == '__main__':
     # Blog_spider.get_html("http://write.blog.csdn.net/postlist")
-    Blog_spider.get_href()
+    # Blog_spider.get_href()
+    Blog_spider.get_data()
     pass
