@@ -11,4 +11,4 @@ index_page = Blueprint('index_page', __name__, template_folder='templates')
 
 @index_page.route('/')
 def hello_world():
-    return render_template('index.html')
+    return render_template('index_test.html')
