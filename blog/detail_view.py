@@ -12,5 +12,7 @@ db = conn()
 @detail_page.route('/detail/<id>')
 def detail_view(id):
     article = db.blog.find_one({"_id": ObjectId(id)})
-
-    return render_template('detail.html',article=article)
+    index = article['index']
+    before = db.blog.find_one({"index": index - 1})
+    after = db.blog.find_one({"index": index + 1})
+    return render_template('detail.html', article=article,before=before,after=after)
