@@ -11,14 +11,15 @@ class Mongodb():
         pass
 
     @classmethod
-    def c_collections(cls, blog_dic={}):
-        blog = db.blog
-        article = blog.insert_one(blog_dic).inserted_id
+    def c_collections(cls, blog_dic={}, name=""):
+        # db.createCollection(name)
+        article = db[name].insert_one(blog_dic).inserted_id
         pass
 
     @classmethod
     def data_count(cls):
         return db.blog.find().count()
+
 
 def conn():
     db = client.laurence

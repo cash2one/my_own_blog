@@ -4,6 +4,23 @@
     {% block head %}
         <title>{% block title %}{% endblock %}-My Own blog</title>
     {% endblock %}
+<script type="text/javascript" src="/static/js/jquery1.42.min.js"></script>
+<script type="text/javascript">
+        $(function(){
+            $('#submit').click(function(){
+                $.ajax({
+                    type:'POST',
+                    url:'/test',
+                    data:$('form').serialize(),
+                    success:function(response,status,xhr){
+                        $("#box").html(response);
+                        alert("post success")
+                    }
+                })
+            })
+        })
+
+    </script>
 </head>
 <body>
     {% block body %}

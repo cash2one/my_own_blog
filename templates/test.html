@@ -2,10 +2,17 @@
 {% block title %}Index{% endblock %}
 {% block head %}
     {{ super() }}
-    <style>
 
-    </style>
 {% endblock %}
 {% block body %}
     Hello Laurencechan
+    <form>
+        name:<input id="name" type="text" name="username">
+        <input id="submit" type="button" value="sumbmit">
+    </form>
+<p>{{ method }}</p>
+    <div id="box"></div>
+
+
+
 {% endblock %}

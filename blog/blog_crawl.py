@@ -7,7 +7,7 @@ from mongo import Mongodb
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "zh-CN,zh;q=0.8",
-    "Cookie": 'uuid_tt_dd=1684901611836556247_20160615; cache_cart_num=0; lzstat_uv=6103127391396727825|3475012@3603726; __message_district_code=230000; __utma=17226283.348199281.1466472479.1470205102.1474351237.3; __utmz=17226283.1474351237.3.2.utmcsr=write.blog.csdn.net|utmccn=(referral)|utmcmd=referral|utmcct=/postlist; _ga=GA1.2.348199281.1466472479; Hm_lvt_6bcd52f51e9b3dce32bec4a3997715ac=1474266325,1474334971,1474429914; Hm_lpvt_6bcd52f51e9b3dce32bec4a3997715ac=1474429920; _message_m=155nwfcrqx2hlpi1aqya3vqj; UserName=laurencechan; UserInfo=jWzio%2FHHUPCTe9tJ1Hp4dw6Vsiz13LsMZW9IouKiwch4%2BTDHaNsk3ykMXEXj0RH4a3oOQyKtGw1ai89dWQm5JseWlpfjinil4FaZ9OG9LCn1atlrIcP7shdyPkbMSBQHQG065qz7c3xigrtD4SCb9A%3D%3D; UserNick=laurencechan; AU=8AE; UN=laurencechan; UE="chenlr10@aliyun.com"; BT=1474429922334; access-token=e65ca402-36ed-4884-942f-b6e0e417db1e; dc_tos=odubcc; dc_session_id=1474437612141; __message_sys_msg_id=0; __message_gu_msg_id=0; __message_cnel_msg_id=0; __message_in_school=0',
+    "Cookie": 'uuid_tt_dd=1684901611836556247_20160615; cache_cart_num=0; lzstat_uv=6103127391396727825|3475012@3603726; __utma=17226283.348199281.1466472479.1474351237.1475203752.4; __utmz=17226283.1474351237.3.2.utmcsr=write.blog.csdn.net|utmccn=(referral)|utmcmd=referral|utmcct=/postlist; __message_district_code=230000; _ga=GA1.2.348199281.1466472479; _gat=1; _message_m=mkcxwtufdg1e2zs0rdf21za4; UserName=laurencechan; UserInfo=jWzio%2FHHUPCTe9tJ1Hp4dw6Vsiz13LsMZW9IouKiwch4%2BTDHaNsk3ykMXEXj0RH4a3oOQyKtGw1ai89dWQm5JseWlpfjinil4FaZ9OG9LCn1atlrIcP7shdyPkbMSBQHQG065qz7c3xigrtD4SCb9A%3D%3D; UserNick=laurencechan; AU=8AE; UN=laurencechan; UE="chenlr10@aliyun.com"; BT=1479899236881; access-token=c7edff9d-1bab-4139-b156-47ac54e4ffaf; Hm_lvt_6bcd52f51e9b3dce32bec4a3997715ac=1479863041,1479863185,1479865430,1479892003; Hm_lpvt_6bcd52f51e9b3dce32bec4a3997715ac=1479899253; dc_tos=oh3dkn; dc_session_id=1479899251648; __message_sys_msg_id=0; __message_gu_msg_id=0; __message_cnel_msg_id=0; __message_in_school=0',
     "Upgrade-Insecure-Requests": 1,
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
 }
@@ -28,7 +28,7 @@ headers_2 = {
 }
 
 
-class Blog_spider():
+class Blog_spider(Mongodb):
     def __init__(self, url):
         self.url = url
         pass
@@ -47,6 +47,7 @@ class Blog_spider():
         response = urllib2.Request(url, headers=headers_1)
         html = urllib2.urlopen(response).read()
         doc = pyq(html)
+        # print doc
         return doc
 
     @classmethod
@@ -59,13 +60,13 @@ class Blog_spider():
         for i in range(0, len(Blog_spider.get_href())):
             summary_dic["title"] = doc(".link_title a").eq(i).text()
             summary_dic["summary"] = doc(".article_description").eq(i).text()
-            summary_dic["index"] = len(Blog_spider.get_href())-i
+            summary_dic["index"] = len(Blog_spider.get_href()) - i
             summary_list.append(summary_dic)
             summary_dic = {}
         return summary_list
 
-    @staticmethod
-    def get_href():
+    @classmethod
+    def get_href(cls):
         # 通过正则匹配获取目标url
         reg = r'(http.+?/details/\d+)'
         url_reg = re.compile(reg)
@@ -95,27 +96,37 @@ class Blog_spider():
                 blog_dic["summary"] = i["summary"]
                 blog_dic["index"] = i["index"]
         # print blog_dic
-        Mongodb.c_collections(blog_dic)
+        return blog_dic
+
         # blog_dic = {}
 
     @classmethod
     def crawl_decide(cls):
+        # Mongodb.c_collections(Blog_spider.get_data(), "blog")
         # 判断是否有新的数据，如果有刚添加进Mongodb
         new_list = Blog_spider.get_href()
         xx = len(new_list)
-        # blog_dic = {}
-        if len(new_list) <= Mongodb.data_count():
+        blog_dic = {}
+        blog_dic_list = []
+        if xx <= Mongodb.data_count():
             pass
         else:
-            for i in range(0, len(new_list) - Mongodb.data_count()):
-                Blog_spider.get_data(new_list[i])
+            for i in range(0, xx - Mongodb.data_count()):
+                blog_dic = Blog_spider.get_data(new_list[i])
+                blog_dic_list.append(blog_dic)
+                # Mongodb.c_collections(blog_dic, "blog")
+        return blog_dic_list
 
+    @classmethod
+    def crawl_blog(cls, c_name=""):
+        for i in Blog_spider.crawl_decide():
+            Blog_spider.c_collections(i, c_name)
 
 if __name__ == '__main__':
-    # Blog_spider.get_html("http://write.blog.csdn.net/postlist")
+    Blog_spider.get_html("http://write.blog.csdn.net/postlist")
     # Blog_spider.get_href()
     # Blog_spider.get_data()
     # Blog_spider.get_html_1("http://blog.csdn.net/laurencechan/article/details/51907576")
     # Blog_spider.crawl_decide()
     # Blog_spider.get_summary()
-    pass
+    # pass
