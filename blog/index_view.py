@@ -14,7 +14,7 @@ db = conn()
 Blog_spider.crawl_blog("blog")
 
 
-@index_page.route('/')
+@index_page.route('/laurence')
 def hello_world():
     blog_list = db.blog.find()
     blog_list_1 = db.blog.find()
