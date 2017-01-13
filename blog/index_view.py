@@ -1,7 +1,6 @@
 # coding=utf-8
 
 from flask import Flask, Blueprint, render_template
-from flask_bootstrap import Bootstrap
 from mongo import conn
 from blog_crawl import Blog_spider
 from aboutme import Aboutme
