@@ -14,6 +14,10 @@ db = conn()
 Blog_spider.crawl_blog("blog")
 
 
+@index_page.route('/')
+def hello_world11():
+    return render_template('test.html', method="POST")
+
 @index_page.route('/laurence')
 def hello_world():
     blog_list = db.blog.find()

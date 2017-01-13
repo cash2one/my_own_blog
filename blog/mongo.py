@@ -2,7 +2,14 @@
 
 from pymongo import MongoClient
 
+# localhost
 client = MongoClient('localhost', 27017)
+
+# 测试Mongo服务器
+# client = MongoClient("mongodb://chinahlj_user:chinahlj_user123@125.211.222.237:27638/laurence")
+# connection = MongoClient('125.211.222.237:27638', 123456)
+# db = connection["laurence"]
+# db.authenticate('chinahlj_user', 'chinahlj_user123')
 db = client.laurence
 
 
